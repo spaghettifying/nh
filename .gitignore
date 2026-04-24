@@ -1,0 +1,36 @@
+.vs/
+.vscode/
+out/
+build-windows/
+build/
+log.txt
+nslog*.txt
+
+# CMake and build system artifacts
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+build.ninja
+.ninja_deps
+.ninja_log
+Makefile
+
+# Binary outputs
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.exe
+*.o
+*.obj
+*.pdb
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+build.sh
+clean.sh
