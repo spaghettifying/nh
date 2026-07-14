@@ -427,6 +427,19 @@ void GuiManager::RenderFeatureToggles() {
         ImGui::SetTooltip("Enable NetVar dumping on startup");
     }
 
+    // NetVar dump toggle
+    bool datamapDump = g_config.isDatamapDumperEnabled();
+    if (ImGui::Checkbox("Datamap Dump", &datamapDump)) {
+        g_config.setBool("datamap_dumper_enabled", datamapDump);
+        g_config.save();
+        EventSystem::GetInstance().Publish(EventSystem::Events::CONFIG_CHANGED);
+    }
+    ImGui::SameLine();
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("Perform datamap dump on enable");
+    }
+
     // ESP toggle
     bool espEnabled = g_config.isESPEnabled();
     if (ImGui::Checkbox("ESP", &espEnabled)) {
@@ -571,6 +584,12 @@ void GuiManager::RenderConfigOptions() {
             aimbotFov = 0.1f;
         }
         g_config.setFloat("aimbot_fov", aimbotFov);
+        g_config.save();
+    }
+
+    bool aimbot_autoshoot = g_config.getFloat("aimbot_autoshoot");
+    if (ImGui::Checkbox("Aimbot autoshoot", &aimbot_autoshoot)) {
+        g_config.setFloat("aimbot_autoshoot", aimbot_autoshoot);
         g_config.save();
     }
 

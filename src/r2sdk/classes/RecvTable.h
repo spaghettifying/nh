@@ -1,7 +1,5 @@
 #pragma once
 
-class RecvProp;
-
 class RecvTable
 {
 public:

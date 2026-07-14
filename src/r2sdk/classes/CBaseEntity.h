@@ -2,6 +2,7 @@
 
 #include "../interfaces/IClientEntity.h"
 #include "../../NetVarManager.h"
+#include "../datamap.h"
 
 class CTakeDamageInfo;
 class ITraceFilter;
@@ -41,9 +42,9 @@ class CBaseEntity : public IClientEntity
 public:
 	virtual                         ~CBaseEntity() = 0;
 
-	virtual /*datamap_t*/void* GetDataDescMap() = 0;
+	virtual datamap_t GetDataDescMap() = 0;
 	virtual void* YouForgotToImplementOrDeclareClientClass() = 0;
-	virtual /*datamap_t*/void* GetPredDescMap() = 0;
+	virtual datamap_t GetPredDescMap() = 0;
 
 	virtual void					FireBullets(const FireBulletsInfo_t& info) = 0;
 	virtual void					ModifyFireBulletsDamage(CTakeDamageInfo* dmgInfo) = 0;

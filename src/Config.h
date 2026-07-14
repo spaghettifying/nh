@@ -47,6 +47,7 @@ public:
     bool isESPEnabled() { return getBool("esp_enabled"); }
     bool isRendererSelfTestEnabled() { return getBool("renderer_self_test_enabled"); }
     bool isDisplayModuleListEnabled() { return getBool("display_module_list"); }
+    bool isDatamapDumperEnabled() { return getBool("datamap_dumper_enabled"); }
 
     int getLobbyLogInterval() { return getInt("lobby_log_interval"); }
     

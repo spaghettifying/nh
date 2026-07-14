@@ -21,6 +21,7 @@ void Config::setDefaults() {
     boolSettings["airstuck_enabled"] = false;
     boolSettings["speed_enabled"] = false;
     boolSettings["aimbot_enabled"] = false;
+    boolSettings["datamap_dump_enabled"] = false;
     
     // Intervals (in frames)
     intSettings["lobby_log_interval"] = 10000;  // Every 1000 frames

@@ -18,6 +18,7 @@
 #include "../../../modules/AirstuckModule.h"
 #include "../../../modules/Speed.h"
 #include "../../../modules/Aimbot.h"
+#include "../../../modules/DataMapDumper.h"
 
 #include <fstream>
 #include <set>
@@ -234,6 +235,9 @@ private:
     // Register aimbot module
     manager_->RegisterModule(std::make_unique<Aimbot>());
     
+    // Registed datamap dumper module
+    manager_->RegisterModule(std::make_unique<DataMapDumper>());
+
     std::cout << "Feature modules registered: " << manager_->GetModuleCount() << " total" << std::endl;
     
     // Print module names

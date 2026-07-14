@@ -186,6 +186,10 @@ set(MODULE_SOURCES
     "src/modules/Speed.cpp"
     "src/modules/Aimbot.h"
     "src/modules/Aimbot.cpp"
+    "src/modules/DataMapDumper.h"
+    "src/modules/DataMapDumper.cpp"
+    "src/modules/ExampleModule.h"
+    "src/modules/ExampleModule.cpp"
 )
 
 # NetVar and initialization sources

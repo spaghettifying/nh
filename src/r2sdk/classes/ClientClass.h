@@ -1,8 +1,6 @@
 #pragma once
 #include <windows.h>
 
-class RecvTable;
-
 // typedef class void* (*CreateEventFn)();
 // typedef class void* (*CreateClientClassFn)(int entnum, int serialNum);
 
