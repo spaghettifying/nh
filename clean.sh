@@ -4,11 +4,11 @@
 # Removes build artifacts and the plugin from Northstar directory
 
 # Configuration
-PROJECT_NAME="CppPluginExample"
-BUILD_DIR="build-windows"
+PROJECT_NAME="nh"
+BUILD_DIR="build"
 BUILD_DIR_ALT="build"
-NORTHSTAR_PLUGINS_DIR="$HOME/Games/Steam/steamapps/common/Titanfall2/R2Northstar/plugins"
-OUTPUT_DLL="lib${PROJECT_NAME}.dll"
+NORTHSTAR_PLUGINS_DIR="$HOME/.local/share/Steam/steamapps/common/Titanfall2/R2Northstar/plugins"
+OUTPUT_DLL="${PROJECT_NAME}.dll"
 
 # Colors for output
 RED='\033[0;31m'
@@ -17,7 +17,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}=== NSCppPluginTemplate Clean Script ===${NC}"
+echo -e "${BLUE}=== nh Clean Script ===${NC}"
 
 # Remove build directory
 if [ -d "$BUILD_DIR" ]; then

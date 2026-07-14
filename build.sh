@@ -1,45 +1,40 @@
 #!/bin/bash
 
-# NSCppPluginTemplate Build Script
-# Builds the plugin as a Windows DLL and copies it to Northstar plugins directory
+# NSCppPluginTemplate Build Script (Optimized)
+# Builds the plugin as a Windows DLL and copies it to Northstar
 
 set -e  # Exit on any error
 
-# Configuration
-PROJECT_NAME="CppPluginExample"
-BUILD_DIR="build-windows"
-NORTHSTAR_PLUGINS_DIR="$HOME/Games/Steam/steamapps/common/Titanfall2/R2Northstar/plugins"
+# ==================== Configuration ====================
+PROJECT_NAME="nh"
+BUILD_DIR="build"
+NORTHSTAR_PLUGINS_DIR="$HOME/.local/share/Steam/steamapps/common/Titanfall2/R2Northstar/plugins"
+DLL_SOURCE="bin/lib${PROJECT_NAME}.dll"
 OUTPUT_DLL="lib${PROJECT_NAME}.dll"
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${BLUE}=== NSCppPluginTemplate Build Script ===${NC}"
 
-# Check if MinGW-w64 is installed
-if ! command -v x86_64-w64-mingw32-gcc &> /dev/null; then
-    echo -e "${RED}Error: MinGW-w64 cross-compiler not found!${NC}"
-    echo "Please install it with: sudo apt install mingw-w64"
-    exit 1
-fi
-
-# Check if CMake is installed
-if ! command -v cmake &> /dev/null; then
-    echo -e "${RED}Error: CMake not found!${NC}"
-    echo "Please install it with: sudo apt install cmake"
-    exit 1
-fi
+# Check dependencies
+for cmd in x86_64-w64-mingw32-gcc cmake; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo -e "${RED}Error: $cmd not found!${NC}"
+        echo "Install with: sudo pacman -S mingw-w64-gcc cmake"
+        exit 1
+    fi
+done
 
 # Create build directory
-echo -e "${YELLOW}Creating build directory...${NC}"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
-# Create toolchain file if it doesn't exist
+# ==================== Toolchain ====================
 if [ ! -f "mingw-toolchain.cmake" ]; then
     echo -e "${YELLOW}Creating MinGW toolchain file...${NC}"
     cat > mingw-toolchain.cmake << 'EOF'
@@ -57,57 +52,51 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 EOF
 fi
 
-# Configure with CMake
-echo -e "${YELLOW}Configuring with CMake...${NC}"
-cmake .. -DCMAKE_TOOLCHAIN_FILE=mingw-toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+# ==================== CMake Configure (only when needed) ====================
+CMAKE_ARGS=(
+    -DCMAKE_TOOLCHAIN_FILE=mingw-toolchain.cmake
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+)
 
-# Build the project
+if [ ! -f "CMakeCache.txt" ] || [ ../CMakeLists.txt -nt CMakeCache.txt ]; then
+    echo -e "${YELLOW}Configuring with CMake...${NC}"
+    cmake .. "${CMAKE_ARGS[@]}"
+else
+    echo -e "${YELLOW}CMake cache up to date, skipping configure...${NC}"
+fi
+
+# ==================== Build ====================
 echo -e "${YELLOW}Building project...${NC}"
-make -j$(nproc)
+cmake --build . --config Release --parallel
 
-# Resolve actual DLL output path (CMake may place it in bin/ or lib/)
-BUILT_DLL=""
-for candidate in "bin/$OUTPUT_DLL" "lib/$OUTPUT_DLL" "$OUTPUT_DLL" "bin/${PROJECT_NAME}.dll" "lib/${PROJECT_NAME}.dll" "${PROJECT_NAME}.dll"; do
-    if [ -f "$candidate" ]; then
-        BUILT_DLL="$candidate"
-        break
-    fi
-done
-
-# Check if build was successful
-if [ -z "$BUILT_DLL" ]; then
-    echo -e "${RED}Error: Build failed! DLL not found in expected output locations.${NC}"
-    echo "Checked: bin/$OUTPUT_DLL, lib/$OUTPUT_DLL, $OUTPUT_DLL"
+# Check output
+if [ ! -f "$DLL_SOURCE" ]; then
+    echo -e "${RED}Error: Build failed! $DLL_SOURCE not found.${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}Build successful! Created: $BUILT_DLL${NC}"
+echo -e "${GREEN}Build successful! Created: $DLL_SOURCE${NC}"
 
-# Check if Northstar directory exists
+# ==================== Copy to Northstar ====================
 if [ ! -d "$NORTHSTAR_PLUGINS_DIR" ]; then
-    echo -e "${YELLOW}Warning: Northstar plugins directory not found at:${NC}"
-    echo "  $NORTHSTAR_PLUGINS_DIR"
-    echo -e "${YELLOW}Creating directory...${NC}"
+    echo -e "${YELLOW}Creating Northstar plugins directory...${NC}"
     mkdir -p "$NORTHSTAR_PLUGINS_DIR"
 fi
 
-# Copy the DLL to Northstar plugins directory
-echo -e "${YELLOW}Copying DLL to Northstar plugins directory...${NC}"
-cp "$BUILT_DLL" "$NORTHSTAR_PLUGINS_DIR/$OUTPUT_DLL"
+echo -e "${YELLOW}Copying DLL to Northstar plugins...${NC}"
+cp -f "$DLL_SOURCE" "$NORTHSTAR_PLUGINS_DIR/"
 
-# Verify the copy
 if [ -f "$NORTHSTAR_PLUGINS_DIR/$OUTPUT_DLL" ]; then
     echo -e "${GREEN}Success! Plugin installed to:${NC}"
     echo "  $NORTHSTAR_PLUGINS_DIR/$OUTPUT_DLL"
     
-    # Show file info
     echo -e "${BLUE}File details:${NC}"
     ls -lh "$NORTHSTAR_PLUGINS_DIR/$OUTPUT_DLL"
     file "$NORTHSTAR_PLUGINS_DIR/$OUTPUT_DLL"
 else
-    echo -e "${RED}Error: Failed to copy DLL to Northstar directory!${NC}"
+    echo -e "${RED}Error: Failed to copy DLL!${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}=== Build and installation complete! ===${NC}"
-echo -e "${BLUE}The plugin is now ready to use with Northstar.${NC}"
